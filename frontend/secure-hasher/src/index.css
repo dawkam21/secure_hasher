@@ -12,16 +12,17 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   display: grid;
+  place-items: center;
   height: 100vh;
 }
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #bec2ff;
   text-decoration: inherit;
 }
 a:hover {
-  color: #535bf2;
+  color: #d6d8ff;
 }
 
 body {
@@ -29,13 +30,32 @@ body {
   min-height: 100vh;
 }
 
-.main {
-  text-align: center;
-}
-
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+}
+
+.main {
+  display: flex;
+  place-items: center;
+  flex-direction: column;
+  padding-top: 5%;
+}
+
+.cpp_message {
+  display: flex;
+  place-items: center;
+  flex-direction: column;
+  padding-top: 5%;
+  padding-bottom: 5%;
+}
+
+.cpp_response {
+  display: flex;
+  place-items: center;
+  flex-direction: column;
+  padding-top: 5%;
+  padding-bottom: 5%;
 }
 
 button {
