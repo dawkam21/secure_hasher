@@ -16,7 +16,7 @@ int main() {
 
         // Tworzymy odpowiedź
         crow::json::wvalue z;
-        z["hash"] = "Backend_Odebral_" + pass;
+        z["hash"] = "Backend_Odebrał_" + pass;
         
         // Zwracamy czysty JSON (CORS nas nie obchodzi, bo mamy Proxy)
         return crow::response(z);
