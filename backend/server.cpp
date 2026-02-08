@@ -2,9 +2,25 @@
 #include <openssl/evp.h> // biblioteka OpenSSL
 #include <iomanip>
 #include <sstream>
+#include <random>
 #include <vector>
 
-std::string sha256(const std::string str) {
+// funkcja generująca sól o zadanej długości
+std::string generateSalt(int length) {
+    const std::string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*";
+    std::random_device rd; // źródło losowości (sprzętowe)
+    std::mt19937 generator(rd()); // generator liczb losowych
+    std::uniform_int_distribution<> distribution(0, characters.size() - 1);
+
+    std::string salt = "";
+    for (int i = 0; i < length; ++i) {
+        salt += characters[distribution(generator)];
+    }
+    return salt;
+}
+
+// funkcja hashująca (SHA-256 z OpenSSl 3.0)
+std::string sha256(const std::string& str) {
     // I - tworzę kontekst dla algorytmu
     EVP_MD_CTX* context = EVP_MD_CTX_new();
 
@@ -47,25 +63,33 @@ int main() {
 
         // pobieram hasło
         std::string pass = x["password"].s();
-        std::string result_msg = "";
+
+        // --- LOGIKA SECURE UNICORN ---
+
+        // I - generuje unikalną sól dla konkretnego strzału
+        std::string salt = generateSalt(16);
+
+        // II - łączy hasło z solą
+        std::string saltedPassword = pass + salt;
+
+        // III - hashuje "posolone" hasło
+        std::string finalHash = sha256(saltedPassword);
+
+        // ocena siły hasła
         std::string strength = "";
-
-        // logika security - walidacja po stronie serwera
-
         if (pass.length() < 8) {
-            strength = "SŁABE (Za krótkie)";
+            strength = "SŁABE (za krótkie)";
         } else {
-            // sprawdza czy są znaki specjalne
+            // sprawdzam czy ma znaki specjalne
             bool hasSpecial = false;
             for (char c : pass) {
                 // isalnum zwraca true, jeśli znak to litera lub cyfra
-                // jeśli nie jest alfanumerycazny -> to znak specjalny
-                if(!std::isalnum(c)) {
+                // jeśli NIE jest alfanumeryczny -> to znak specjalny
+                if (!std::isalnum(c)) {
                     hasSpecial = true;
-                    break; // jeden jest, wystarczy
+                    break; // znalazło jeden, starczy
                 }
             }
-
             if (hasSpecial) {
                 strength = "SILNE (Secure Unicorn aprobuje!)";
             } else {
@@ -73,13 +97,12 @@ int main() {
             }
         }
 
-        std::string hashed_password = sha256(pass);
-
         // tworzę odpowiedź
         crow::json::wvalue z;
-        z["hash"] = hashed_password;
+        z["hash"] = finalHash;
+        z["salt"] = salt; // odsyła sół, żebym ją widział (w produkcji zapisuje się ją w bazie)
+        z["combined"] = saltedPassword; // pokazuje też, co realnie poszło do hashera
         z["strength"] = strength; // można wysłać oba pola (?)
-        z["algorithm"] = "SHA-256 (OpenSSL 3.0 EVP)";
 
         // zwraca czysty JSON (CORS mnie nie obchodzi, bo mam Proxy)
         return crow::response(z);
