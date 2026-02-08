@@ -4,6 +4,8 @@
 #include <sstream>
 #include <random>
 #include <vector>
+#include <thread>
+#include <chrono>
 
 // funkcja generująca sól o zadanej długości
 std::string generateSalt(int length) {
@@ -61,6 +63,7 @@ int main() {
     // Prosty endpoint POST - definiuję trase "/api/hash", akceptuje tylko metodę POST (wysyłanie danych)
     CROW_ROUTE(app, "/api/hash").methods(crow::HTTPMethod::POST)
     ([](const crow::request& req){
+        std::this_thread::sleep_for(std::chrono::milliseconds(2000)); // zatrzymaj na 2 sekundy
         // zamienia to, co przyszło (body), na obiekt (JSON)
         auto x = crow::json::load(req.body);
         
@@ -107,8 +110,8 @@ int main() {
         crow::json::wvalue z;
         z["hash"] = finalHash;
         z["salt"] = salt; // odsyła sół, żebym ją widział (w produkcji zapisuje się ją w bazie)
-        z["combined"] = saltedPassword; // pokazuje też, co realnie poszło do hashera
         z["strength"] = strength; // można wysłać oba pola (?)
+        z["combined"] = saltedPassword; // pokazuje też, co realnie poszło do hashera
 
         // zwraca czysty JSON (CORS mnie nie obchodzi, bo mam Proxy) - odsyła JSON do Reacta
         return crow::response(z);
