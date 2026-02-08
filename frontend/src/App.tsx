@@ -3,13 +3,15 @@ import { useState } from 'react';
 function App() {
   const [input, setInput] = useState<string>("");
   const [result, setResult] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const sendToCpp = async () => {
     // walidacja - jeśli pole jest puste, nie wysyłaj nic
-    if (!input.trim()) {
-      alert("Trzeba coś wpisać!");
-      return;
-    }
+    if (!input.trim()) return;
+
+    // włącza tryb ładowania
+    setIsLoading(true);
+    setResult(""); // czyści poprzedni wynik, żeby nie mylił
 
     try {
       // WAŻNE: Tu nie ma już "http://localhost:18080", jest tylko ścieżka
@@ -20,10 +22,12 @@ function App() {
       });
 
       const data = await response.json();
-      setResult(data.hash); // wyświetla to, co c++ odeśle
+      setResult(data.strength); // wyświetla to, co c++ odeśle
     } catch (e) {
       console.error(e);
       setResult("Błąd połączenia z backendem (sprawdź czy serwer C++ działa)");
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -47,9 +51,10 @@ function App() {
         </div>
 
         <button 
-          type='submit'
-          className='myButton'
-          onClick={sendToCpp}>Wyślij do silnika C++
+          type="submit"
+          disabled={ isLoading } // przycisk staje się szary i nieklikalny podczas pracy
+          className='hasher-button'
+        > {isLoading ? "Analizowanie..." : "Sprawdź"}
         </button>
       </form>
       <div className="cpp_response">
