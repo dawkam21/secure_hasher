@@ -9,7 +9,11 @@
 std::string generateSalt(int length) {
     const std::string characters = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*";
     std::random_device rd; // źródło losowości (sprzętowe)
+
+    // mt19937 to algorytm (Mersenne Twister), który przerabia ten impuls z procesora na liczby
     std::mt19937 generator(rd()); // generator liczb losowych
+
+    // distribution mówi: "losuj liczby tylko z zakresu od 0 do (liczba znaków - 1)"
     std::uniform_int_distribution<> distribution(0, characters.size() - 1);
 
     std::string salt = "";
@@ -44,6 +48,7 @@ std::string sha256(const std::string& str) {
     // VII - konwersja na czytelny hex (16tkowy)
     std::stringstream ss;
     for(unsigned int i = 0; i < lengthOfHash; i++) {
+        // setw(2) - każdy bajt musi mieć 2 znaki (np. "0a" zamiast "a")
         ss << std::hex << std::setw(2) << std::setfill('0') << (int)hash[i];
     }
 
@@ -51,17 +56,18 @@ std::string sha256(const std::string& str) {
 }
 
 int main() {
-    crow::SimpleApp app;
+    crow::SimpleApp app; // tworzy aplikacje serwera
 
-    // Prosty endpoint POST
+    // Prosty endpoint POST - definiuję trase "/api/hash", akceptuje tylko metodę POST (wysyłanie danych)
     CROW_ROUTE(app, "/api/hash").methods(crow::HTTPMethod::POST)
     ([](const crow::request& req){
+        // zamienia to, co przyszło (body), na obiekt (JSON)
         auto x = crow::json::load(req.body);
         
         // Jeśli JSON jest pusty lub błędny
         if (!x) return crow::response(400, "Brak JSON");
 
-        // pobieram hasło
+        // pobieram hasło - wyciągam z JSON-a jako string (.s())
         std::string pass = x["password"].s();
 
         // --- LOGIKA SECURE UNICORN ---
@@ -97,14 +103,14 @@ int main() {
             }
         }
 
-        // tworzę odpowiedź
+        // tworzę odpowiedź (wartości, które wrócą do Reacta)
         crow::json::wvalue z;
         z["hash"] = finalHash;
         z["salt"] = salt; // odsyła sół, żebym ją widział (w produkcji zapisuje się ją w bazie)
         z["combined"] = saltedPassword; // pokazuje też, co realnie poszło do hashera
         z["strength"] = strength; // można wysłać oba pola (?)
 
-        // zwraca czysty JSON (CORS mnie nie obchodzi, bo mam Proxy)
+        // zwraca czysty JSON (CORS mnie nie obchodzi, bo mam Proxy) - odsyła JSON do Reacta
         return crow::response(z);
     });
 
