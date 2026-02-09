@@ -1,0 +1,1 @@
+export function Generator() { return <div>Tu będzie generator</div> }
