@@ -9,7 +9,7 @@ export const ResultBox = ({ strength, combined, hash }: ResultBoxProps) => {
 
     return (
         <div style={{ display: "flex", placeItems: "center", flexDirection: "column", marginTop: "20px", border: "1px solid #eee", padding: "15px"}}>
-            <h3 style={{ color: strength.includes("SILNE") ? "green" : "red"}}>
+            <h3 style={{ color: strength.includes("SILNE") ? "green" : strength.includes("ŚREDNIE") ? "orange" : "red"}}>
                 Ocena: {strength}
             </h3>
             <p>Kombinacja (hasło + sól): {combined}</p>
