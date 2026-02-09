@@ -1,9 +1,15 @@
 import { useState } from 'react';
+import { ResultBox } from './components/ResultBox';
 
 function App() {
+  // zmienne stanu (State)
   const [input, setInput] = useState<string>("");
-  const [result, setResult] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  // pudełka na dane z C++
+  const [strength, setStrength] = useState<string>("");
+  const [combined, setCombined] = useState<string>("");
+  const [hash, setHash] = useState<string>("");
 
   const sendToCpp = async () => {
     // walidacja - jeśli pole jest puste, nie wysyłaj nic
@@ -11,7 +17,9 @@ function App() {
 
     // włącza tryb ładowania
     setIsLoading(true);
-    setResult(""); // czyści poprzedni wynik, żeby nie mylił
+    setStrength(""); // czyści poprzedni wynik, żeby nie mylił
+    setCombined("");
+    setHash("");
 
     try {
       // WAŻNE: Tu nie ma już "http://localhost:18080", jest tylko ścieżka
@@ -22,10 +30,12 @@ function App() {
       });
 
       const data = await response.json();
-      setResult(data.strength); // wyświetla to, co c++ odeśle
+      setStrength(data.strength); // wyświetla to, co c++ odeśle
+      setCombined(data.combined);
+      setHash(data.hash);
     } catch (e) {
       console.error(e);
-      setResult("Błąd połączenia z backendem (sprawdź czy serwer C++ działa)");
+      setStrength("Błąd połączenia z backendem (sprawdź czy serwer C++ działa)"); // używam strength do pokazania błędu
     } finally {
       setIsLoading(false);
     }
@@ -52,24 +62,17 @@ function App() {
 
         <button 
           type="submit"
-          disabled={ isLoading } // przycisk staje się szary i nieklikalny podczas pracy
+          disabled={ isLoading || !input.trim() } // przycisk staje się szary i nieklikalny podczas pracy
           className='hasher-button'
         > {isLoading ? "Analizowanie..." : "Sprawdź"}
         </button>
       </form>
       <div className="cpp_response">
-        <strong>Odpowiedź z backendu:</strong>
-        <p style={{ 
-          fontSize: "20px",
-          fontWeight: "bold",
-          color: result.includes("SILNE") 
-            ? "#2ecc71" 
-            : result.includes("ŚREDNIE")
-              ? "#f1c40f"
-              :"#e74c3c" 
-        }}>
-          {result || "Czekam na hasło..."}
-        </p>
+        <ResultBox
+          strength={strength}
+          combined={combined}
+          hash={hash}
+        />
       </div>
     </section>
   );
