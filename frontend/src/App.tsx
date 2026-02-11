@@ -20,7 +20,7 @@ function App() {
             className={`nav-button ${activeTab === 'hasher' ? 'active' : ''}`}
             onClick={() => setActiveTab('hasher')}
           >
-            Haszarka
+            Password hasher
           </button>
           <button 
             className={`nav-button ${activeTab === 'generator' ? 'active' : ''}`}
