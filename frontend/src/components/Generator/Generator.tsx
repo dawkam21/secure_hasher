@@ -2,16 +2,41 @@ import { useState } from "react"
 
 export function Generator() { 
 
-    const [passLength, setPassLength] = useState<number>(12);
+    const [passLength, setPassLength] = useState<number>(8);
     const [wantSpecial, setWantSpecial] = useState<boolean>(false);
     const [wantNumbers, setWantNumbers] = useState<boolean>(false);
 
-    // const response = await fetch()
+    const [generatedPassword, setGeneratedPassword] = useState<string>("");
 
-    // const data = await response.json();
-    //   setWantSpecial(data.wantSpecial); // wyświetla to, co c++ odeśle
-    //   setWantNumbers(data.wantNumbers);
-    //   setPassLength(data.passLength);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const handleGenerate = async() => {
+        setIsLoading(true);
+        setGeneratedPassword(""); // czyszczę stare hasło
+
+        try {
+            const response = await fetch("/api/generator", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify ({
+                    // tu wysyła aktualne wartości ze stanu
+                    "length": passLength,
+                    "numbers": wantNumbers,
+                    "special": wantSpecial
+                }),
+            });
+
+            const data = await response.json();
+
+            // C++ odsyła obiekt { "password: "..." }, więc tak go odbieram
+            setGeneratedPassword(data.password)
+        } catch (e) {
+            console.error("Błąd generatora: ", e);
+            setGeneratedPassword("Błąd połączenia z serwerem C++");
+        } finally {
+            setIsLoading(false);
+        }
+    };
 
     return <section className="container">
         <h2>Secure Unicorn Generator 🦄</h2>
@@ -51,6 +76,33 @@ export function Generator() {
             </label>
         </div>
 
-        <button className="generator-button">Generuj bezpieczne hasło</button>
+        <button 
+            className="generator-button"
+            onClick={handleGenerate}
+            disabled={isLoading} // to sprawia, że przycisk gaśnie
+        >
+            {isLoading ? "Generowanie..." : "Generuj bezpieczne hasło"}
+        </button>
+
+        {/* wyświetlanie wyniku */}
+        {generatedPassword && ( // warunkowe renderowanie {generatedPassword && ...}: Dzięki temu napis "Twoje nowe hasło" nie straszy na ekranie, dopóki ktoś faktycznie go nie wygeneruje.
+            <div className="result-container">
+                <label>Twoje nowe hasło: </label>
+                <div className="password-display">
+                    <input 
+                        type="text" 
+                        readOnly
+                        value={generatedPassword}
+                        className="password-input"
+                    />
+                    <button
+                        onClick={() => navigator.clipboard.writeText(generatedPassword)}
+                        className="copy-button"
+                    >
+                        Kopiuj📋
+                    </button>
+                </div>
+            </div>
+        )}
     </section> 
 }
