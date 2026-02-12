@@ -117,6 +117,38 @@ int main() {
         return crow::response(z);
     });
 
+    // generator
+
+    CROW_ROUTE(app, "/api/generator").methods(crow::HTTPMethod::POST)
+    ([](const crow::request& req) {
+        auto x = crow::json::load(req.body);
+        if (!x) return crow::response(400, "Błąd JSON");
+
+        int length = x["length"].i();
+        bool useNumbers = x["numbers"].b();
+        bool useSpecial = x["special"].b();
+
+        // I - buduję pule znaków
+        std::string charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        if (useNumbers) charset += "0123456789";
+        if (useSpecial) charset += "!@#$%^&*()-_=+[]{}";
+
+        // II - losowanie (style secure unicorn)
+        std::string password = "";
+        std::random_device rd;
+        std::mt19937 generator(rd());
+        std::uniform_int_distribution<> distribution(0, charset.size() - 1);
+
+        for (int i = 0; i < length; ++i) {
+            password += charset[distribution(generator)];
+        }
+
+        // III - odsyłam wynik do reacta
+        crow::json::wvalue z;
+        z["password"] = password;
+        return crow::response(z);
+    });
+
     // uruchomienie na porcie 18080
     app.port(18080).bindaddr("0.0.0.0").multithreaded().run();
 }
