@@ -39,7 +39,7 @@ export function Generator() {
     };
 
     return <section className="container">
-        <h2>Secure Unicorn Generator 🦄</h2>
+        <h2>Password Generator 🦄</h2>
 
         {/* I - Suwak długości (range) */}
         <div className="control-group">

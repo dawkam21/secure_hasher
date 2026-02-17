@@ -39,13 +39,6 @@ h1 {
   line-height: 1.1;
 }
 
-.main {
-  display: flex;
-  place-items: center;
-  flex-direction: column;
-  padding-top: 5%;
-}
-
 .myForm {
   display: flex;
   place-items: center;

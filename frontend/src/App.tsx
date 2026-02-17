@@ -1,14 +1,20 @@
+import './App.css';
 import { useState } from 'react';
 import { Hasher } from './components/Hasher/Hasher';
 import { Generator } from './components/Generator/Generator';
-import './App.css';
+import { EntropyGuardian } from './components/EntropyGuardian/EntropyGuardian';
 
-// Definiujemy dostępne widoki dla TypeScripta
-type View = 'hasher' | 'generator';
+const tabs = {
+  hasher: <Hasher />,
+  generator: <Generator />,
+  entropyGuardian: <EntropyGuardian />
+};
 
 function App() {
+
+  type TabType = 'hasher' | 'generator' | 'entropyGuardian';
   // Stan kontrolujący, którą zakładkę widzimy
-  const [activeTab, setActiveTab] = useState<View>('hasher');
+  const [activeTab, setActiveTab] = useState<TabType>('hasher');
 
   return (
     <main className="app-container">
@@ -28,16 +34,18 @@ function App() {
           >
             Generator
           </button>
+          <button 
+            className={`nav-button ${activeTab === 'entropyGuardian' ? 'active' : ''}`}
+            onClick={() => setActiveTab('entropyGuardian')}
+          >
+            Entropy Guardian
+          </button>
         </nav>
       </header>
 
       {/* Dynamiczne wyświetlanie komponentu */}
       <section className="app-content">
-        {activeTab === 'hasher' ? (
-          <Hasher />
-        ) : (
-          <Generator />
-        )}
+        {tabs[activeTab]}
       </section>
 
       <footer className="app-footer">

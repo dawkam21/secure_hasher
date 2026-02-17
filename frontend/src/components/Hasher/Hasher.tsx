@@ -43,8 +43,8 @@ export function Hasher() {
 
   return (
     <section className="main">
-      <h1>React + C++ (Proxy Mode)</h1>
-      <h2>Secure Unicorn Hasher</h2>
+      <h2>React + C++ (Proxy Mode)</h2>
+      <h3>Secure Unicorn Hasher</h3>
       {/* zawijam wszystko w form*/}
       <form className='myForm' onSubmit={(e) => {
         e.preventDefault(); // zapobiega przeładowaniu strony przez przeglądarkę
