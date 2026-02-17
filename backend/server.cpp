@@ -6,6 +6,7 @@
 #include <vector>
 #include <thread>
 #include <chrono>
+#include <cmath>
 
 // funkcja generująca sól o zadanej długości
 std::string generateSalt(int length) {
@@ -58,7 +59,7 @@ std::string sha256(const std::string& str) {
 }
 
 int main() {
-    crow::SimpleApp app; // tworzy aplikacje serwera
+    crow::SimpleApp app; // tworzy aplikacje serwera - zaczynam od PasswordHasher
 
     // Prosty endpoint POST - definiuję trase "/api/hash", akceptuje tylko metodę POST (wysyłanie danych)
     CROW_ROUTE(app, "/api/hash").methods(crow::HTTPMethod::POST)
@@ -147,6 +148,65 @@ int main() {
         crow::json::wvalue z;
         z["password"] = password;
         return crow::response(z);
+    });
+
+    // entropy guardian
+    
+    // E = L x log2(R) - L (Length): długość hasła [liczba znaków] - R (Range/Pool): wielkość puli znaków, z której korzystamy 
+
+    // R: 
+    // * tylko małe litery (a-z): 26
+    // * tylko duże litery (A-Z): 26
+    // * cyfry (0-9): 10
+    // * znaki specjalne (!@#$%): ok. 32
+
+    CROW_ROUTE(app, "/api/entropy-guardian").methods(crow::HTTPMethod::POST)
+    ([](const crow::request& req) {
+        auto x = crow::json::load(req.body);
+        if (!x) return crow::response(400, "Błąd JSON");
+
+        bool hasLower = false;
+        bool hasUpper = false;
+        bool hasDigit = false;
+        bool hasSpecial = false;
+        int poolSize = 0;
+        double Entropy = 0;
+        std::string verdict = "Bardzo słabe";
+
+        std::string password = x["password"].s();
+
+        for (char c : password) {
+            if (c >= '0' && c <= '9') { hasDigit = true; } 
+            else if (c >= 'a' && c <= 'z') { hasLower = true; } 
+            else if (c >= 'A' && c <= 'Z') { hasUpper = true; } 
+            else { hasSpecial = true; };
+        }
+
+        if (hasLower) poolSize += 26;
+        if (hasUpper) poolSize += 26;
+        if (hasDigit) poolSize += 10;
+        if (hasSpecial) poolSize += 32;
+
+        if (poolSize > 0) {
+            Entropy = password.length() * std::log2(poolSize);
+        }
+
+        if (Entropy >= 128) {
+            verdict = "Bardzo silne (God Mode)";
+        } else if (Entropy >= 60) {
+            verdict = "Silne";
+        } else if (Entropy >= 36) {
+            verdict = "Średnie";
+        } else if (Entropy >= 28) {
+            verdict = "Słabe";
+        } else {
+            verdict = "Tragedia, zmień to";
+        }
+
+        crow::json::wvalue result;
+        result["entropy"] = Entropy; // wysyła do reacta
+        result["verdict"] = verdict;
+        return crow::response(result);
     });
 
     // uruchomienie na porcie 18080
