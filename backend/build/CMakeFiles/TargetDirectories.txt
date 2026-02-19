@@ -1,0 +1,3 @@
+/home/vizzy/MultiTool/backend/build/CMakeFiles/app.dir
+/home/vizzy/MultiTool/backend/build/CMakeFiles/edit_cache.dir
+/home/vizzy/MultiTool/backend/build/CMakeFiles/rebuild_cache.dir

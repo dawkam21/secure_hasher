@@ -160,7 +160,7 @@ int main() {
     // * cyfry (0-9): 10
     // * znaki specjalne (!@#$%): ok. 32
 
-    CROW_ROUTE(app, "/api/entropy-guardian").methods(crow::HTTPMethod::POST)
+    CROW_ROUTE(app, "/api/entropy-analysis").methods(crow::HTTPMethod::POST)
     ([](const crow::request& req) {
         auto x = crow::json::load(req.body);
         if (!x) return crow::response(400, "Błąd JSON");
