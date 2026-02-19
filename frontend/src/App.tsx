@@ -1,24 +1,33 @@
 import './App.css';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Hasher } from './components/Hasher/Hasher';
 import { Generator } from './components/Generator/Generator';
-import { EntropyGuardian } from './components/EntropyGuardian/EntropyGuardian';
+import { EntropyAnalysis } from './components/EntropyGuardian/EntropyAnalysis/EntropyAnalysis';
 
 const tabs = {
   hasher: <Hasher />,
   generator: <Generator />,
-  entropyGuardian: <EntropyGuardian />
+  entropyAnalysis: <EntropyAnalysis />
 };
 
 function App() {
 
-  type TabType = 'hasher' | 'generator' | 'entropyGuardian';
-  // Stan kontrolujący, którą zakładkę widzimy
-  const [activeTab, setActiveTab] = useState<TabType>('hasher');
+  type TabType = keyof typeof tabs;
 
+  // stan kontrolujący, którą zakładkę widzimy
+  const [activeTab, setActiveTab] = useState<TabType>(() => {
+    const savetTab = localStorage.getItem('activeTab');
+    return (savetTab as TabType) || 'hasher';
+  });
+
+  // zapisuje każdą zmiane - można to wpiąć w funkcję onClick przycisku zmiany tabów
+  useEffect(() => {
+    localStorage.setItem('activeTab', activeTab);
+  }, [activeTab]);
+ 
   return (
     <main className="app-container">
-      {/* Nagłówek wspólny dla całej aplikacji */}
+      {/* nagłówek wspólny dla całej aplikacji */}
       <header className="app-header">
         <h1>Secure Unicorn Toolkit 🦄</h1>
         <nav className="app-nav">
@@ -35,15 +44,15 @@ function App() {
             Generator
           </button>
           <button 
-            className={`nav-button ${activeTab === 'entropyGuardian' ? 'active' : ''}`}
-            onClick={() => setActiveTab('entropyGuardian')}
+            className={`nav-button ${activeTab === 'entropyAnalysis' ? 'active' : ''}`}
+            onClick={() => setActiveTab('entropyAnalysis')}
           >
             Entropy Guardian
           </button>
         </nav>
       </header>
 
-      {/* Dynamiczne wyświetlanie komponentu */}
+      {/* dynamiczne wyświetlanie komponentu */}
       <section className="app-content">
         {tabs[activeTab]}
       </section>

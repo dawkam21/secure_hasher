@@ -5,7 +5,7 @@ interface EntropyResponse {
     verdict: string;
 }
 
-export function EntropyGuardian() {
+export function EntropyAnalysis() {
 
     const [result, setResult] = useState<EntropyResponse | null>(null);
     const [loading, setLoading] = useState<boolean>(false);
@@ -23,7 +23,7 @@ export function EntropyGuardian() {
             // 2 sekundy opóźnienia
             await new Promise(resolve => setTimeout(resolve, 2000));
 
-            const response = await fetch('/api/entropy-guardian', {
+            const response = await fetch('/api/entropy-analysis', {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify ({ password })
