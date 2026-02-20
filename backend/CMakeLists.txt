@@ -19,7 +19,7 @@ find_package(OpenSSL REQUIRED)
 include_directories(/usr/local/include) # Zmień, jeśli masz Crow w innym miejscu
 
 # Dodanie pliku wykonywalnego (twoja_nazwa_pliku.cpp)
-add_executable(app server.cpp)
+add_executable(app main.cpp)
 
 # Łączenie bibliotek z Twoim programem
 target_link_libraries(app 
