@@ -1,8 +1,8 @@
 [
 {
   "directory": "/home/vizzy/MultiTool/backend/build",
-  "command": "/usr/sbin/c++   -std=gnu++17 -o CMakeFiles/app.dir/server.cpp.o -c /home/vizzy/MultiTool/backend/server.cpp",
-  "file": "/home/vizzy/MultiTool/backend/server.cpp",
-  "output": "CMakeFiles/app.dir/server.cpp.o"
+  "command": "/usr/sbin/c++   -std=gnu++17 -o CMakeFiles/app.dir/main.cpp.o -c /home/vizzy/MultiTool/backend/main.cpp",
+  "file": "/home/vizzy/MultiTool/backend/main.cpp",
+  "output": "CMakeFiles/app.dir/main.cpp.o"
 }
 ]

@@ -2,7 +2,7 @@ app: \
   /usr/lib/gcc/x86_64-redhat-linux/15/../../../../lib64/crt1.o \
   /usr/lib/gcc/x86_64-redhat-linux/15/../../../../lib64/crti.o \
   /usr/lib/gcc/x86_64-redhat-linux/15/crtbegin.o \
-  CMakeFiles/app.dir/server.cpp.o \
+  CMakeFiles/app.dir/main.cpp.o \
   /usr/lib64/libssl.so \
   /usr/lib64/libcrypto.so \
   /usr/lib/gcc/x86_64-redhat-linux/15/libstdc++.so \
@@ -40,7 +40,7 @@ app: \
 
 /usr/lib/gcc/x86_64-redhat-linux/15/crtbegin.o:
 
-CMakeFiles/app.dir/server.cpp.o:
+CMakeFiles/app.dir/main.cpp.o:
 
 /usr/lib64/libssl.so:
 

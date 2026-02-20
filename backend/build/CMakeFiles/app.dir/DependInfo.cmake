@@ -8,7 +8,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 
 # The set of dependency files which are needed:
 set(CMAKE_DEPENDS_DEPENDENCY_FILES
-  "/home/vizzy/MultiTool/backend/server.cpp" "CMakeFiles/app.dir/server.cpp.o" "gcc" "CMakeFiles/app.dir/server.cpp.o.d"
+  "/home/vizzy/MultiTool/backend/main.cpp" "CMakeFiles/app.dir/main.cpp.o" "gcc" "CMakeFiles/app.dir/main.cpp.o.d"
   "" "app" "gcc" "CMakeFiles/app.dir/link.d"
   )
 

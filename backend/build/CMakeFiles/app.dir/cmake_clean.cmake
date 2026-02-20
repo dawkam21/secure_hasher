@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/app.dir/link.d"
-  "CMakeFiles/app.dir/server.cpp.o"
-  "CMakeFiles/app.dir/server.cpp.o.d"
+  "CMakeFiles/app.dir/main.cpp.o"
+  "CMakeFiles/app.dir/main.cpp.o.d"
   "app"
   "app.pdb"
 )

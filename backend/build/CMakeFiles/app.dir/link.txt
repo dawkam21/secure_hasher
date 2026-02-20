@@ -1,1 +1,1 @@
-/usr/sbin/c++ -Wl,--dependency-file=CMakeFiles/app.dir/link.d CMakeFiles/app.dir/server.cpp.o -o app  /usr/lib64/libssl.so /usr/lib64/libcrypto.so
+/usr/sbin/c++ -Wl,--dependency-file=CMakeFiles/app.dir/link.d CMakeFiles/app.dir/main.cpp.o -o app  /usr/lib64/libssl.so /usr/lib64/libcrypto.so
